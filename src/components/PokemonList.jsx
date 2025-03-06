@@ -1,5 +1,4 @@
 import { useEffect, useState} from "react";
-import axios from "axios";
 import PokemonCard from "./PokemonCard";
 
 const API_URL = "https://pokeapi.co/api/v2";
@@ -10,10 +9,16 @@ function PokemonList() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios
-        .get(`${API_URL}/pokemon`)
-        .then ((res) => {
-            setPokemons(res.data.results);
+        setIsLoading(true);
+        fetch(`${API_URL}/pokemon`)
+        .then((res) => {
+            if (!res.ok) {
+                throw new Error("Network response was not ok");
+              }
+            return res.json();
+        })
+        .then ((data) => {
+            setPokemons(data.results);
             setError(null)
         }) 
         .catch((err) => {
@@ -25,15 +30,17 @@ function PokemonList() {
          });
     }, []);
 
-    if(isLoading) return <p>Loading...</p>
-    if(error) return <p>Error: {error}</p>
+    if(isLoading) return <div>Loading...</div>
+    if(error) return <div>Error: {error}</div>
 
     return (
         <>
         <div>
             {pokemons.map((pokemon) => (
                 <PokemonCard name={pokemon.name} key={pokemon.name}/>
-            ))}
+            )
+            )}
+            
         </div>
         </>
     )
