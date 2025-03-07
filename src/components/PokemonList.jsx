@@ -1,4 +1,4 @@
-import { useEffect, useState} from "react";
+import { useEffect, useState, useRef} from "react";
 import PokemonCard from "./PokemonCard";
 
 const API_URL = "https://pokeapi.co/api/v2";
@@ -9,6 +9,7 @@ function PokemonList() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [page, setPage] = useState(0); //a page delivers 20 items
+    const observerElem = useRef(null)
 
     useEffect(() => {
         setIsLoading(true);
@@ -32,7 +33,19 @@ function PokemonList() {
          });
     }, [page]); //when page changes, we load more pokemons
 
-    if(isLoading) return <div>Loading...</div>
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && !isLoading) { //we say  what to do when the element we want to observe appears
+                setPage((prev) => prev+1);
+            }
+        }, {threshold: 1})
+        if(observerElem.current) {  //we say here which element we want to observe
+            observer.observe(observerElem.current);
+        }
+        return () => observer.disconnect();
+    }, [isLoading]);
+
+    
     if(error) return <div>Error: {error}</div>
 
     return (
@@ -43,10 +56,9 @@ function PokemonList() {
                 return <PokemonCard name={pokemon.name} key={pokemonId}/>
             }
             )}
-            {!isLoading &&( 
-            <button onClick = {() => setPage((prev) => prev + LIMIT)}>Load more</button>
-            ) }
         </div>
+        <div ref={observerElem} style={{ height: "20px" }}></div>
+        {isLoading && <p>Loading...</p>}
         </>
     )
 }
