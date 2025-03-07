@@ -10,7 +10,7 @@ function PokemonList() {
     const [error, setError] = useState(null);
     const [page, setPage] = useState(0); //a page delivers 20 items
 
-    useEffect(() => {
+    const loadPokemons = () => {
         setIsLoading(true);
         fetch(`${API_URL}/pokemon?limit=${LIMIT}&offset=${page}`)
         .then((res) => {
@@ -30,24 +30,52 @@ function PokemonList() {
         .finally(() => {
             setIsLoading(false);
          });
-    }, [page]); //when page changes, we load more pokemons
+    }
+
+    useEffect(() => {
+        loadPokemons();
+    }, [page]);
+
+    useEffect(()=> {
+        if (pokemons.length === 0) return;
+        const observer= new IntersectionObserver((entries) => {
+            const firstEntry = entries[0];
+            console.log("Intersection observed:", firstEntry);
+            if (firstEntry.isIntersecting && !isLoading) {
+                console.log("Last card is intersecting!"); 
+                setPage((prev) => prev+ LIMIT);
+            }
+        }, {threshold:1.0});
+       const lastCard = document.querySelector(".card:last-child");
+       console.log("Last card element:", lastCard); 
+       if(lastCard) {
+        observer.observe(lastCard);
+       }
+       return () => {
+        if(lastCard) {
+            console.log("unobserving last card"); 
+            observer.unobserve(lastCard);
+        }
+       };
+    }, [isLoading, pokemons])
 
     if(isLoading) return <div>Loading...</div>
     if(error) return <div>Error: {error}</div>
 
     return (
-        <>
+    
         <div>
-            {pokemons.map((pokemon) => { 
+            {pokemons.map((pokemon, index) => { 
                 const pokemonId = pokemon.url.split("/")[6];
-                return <PokemonCard name={pokemon.name} key={pokemonId}/>
-            }
-            )}
-            {!isLoading &&( 
-            <button onClick = {() => setPage((prev) => prev + LIMIT)}>Load more</button>
-            ) }
+                const isLastCard = index === pokemons.length - 1;
+                console.log(`Pokemon ${pokemon.name} is last card: ${isLastCard}`); // Debug
+                return (<PokemonCard name={pokemon.name} key={pokemonId} className={index === pokemons.length-1 ? "card":""}/>)
+        
+            })}
+            {isLoading && <div>Loading more...</div>}
+            
         </div>
-        </>
+    
     )
 }
 

@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 
 const API_URL = "https://pokeapi.co/api/v2";
 
-function PokemonCard({name}) {
+function PokemonCard({name, className}) {
+    console.log(`Rendering PokemonCard for ${name} with class: ${className}`); // Debug
     const [pokemon, setPokemon] = useState(null);
     const [error, setError] = useState(null);
 
