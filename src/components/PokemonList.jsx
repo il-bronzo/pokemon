@@ -15,7 +15,7 @@ function PokemonList() {
 
     useEffect(() => {
         setIsLoading(true);
-        fetch(`${API_URL}/pokemon?limit=${LIMIT}&offset=${page}`)
+        fetch(`${API_URL}/pokemon?offset=${page}&limit=${LIMIT}`)
         .then((res) => {
             if (!res.ok) {
                 throw new Error("Network response was not ok");
@@ -38,7 +38,7 @@ function PokemonList() {
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting && !isLoading) { 
-                setPage((prev) => prev+1);
+                setPage((prev) => prev+LIMIT);
             }
         }, {threshold: 1})
         if(observerElem.current) {  
