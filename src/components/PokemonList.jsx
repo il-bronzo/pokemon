@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef} from "react";
 import PokemonCard from "./PokemonCard";
+import PokemonDetailsModal from "./PokemonDetailsModal";
 
 const API_URL = "https://pokeapi.co/api/v2";
 const LIMIT = 20; //items per page for /pokemon.
@@ -10,6 +11,7 @@ function PokemonList() {
     const [error, setError] = useState(null);
     const [page, setPage] = useState(0); //a page delivers 20 items
     const observerElem = useRef(null)
+    const [clickedPokemon, setClickedPokemon] = useState(null);
 
     useEffect(() => {
         setIsLoading(true);
@@ -31,15 +33,15 @@ function PokemonList() {
         .finally(() => {
             setIsLoading(false);
          });
-    }, [page]); //when page changes, we load more pokemons
+    }, [page]); 
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting && !isLoading) { //we say  what to do when the element we want to observe appears
+            if (entries[0].isIntersecting && !isLoading) { 
                 setPage((prev) => prev+1);
             }
         }, {threshold: 1})
-        if(observerElem.current) {  //we say here which element we want to observe
+        if(observerElem.current) {  
             observer.observe(observerElem.current);
         }
         return () => observer.disconnect();
@@ -53,12 +55,17 @@ function PokemonList() {
         <div>
             {pokemons.map((pokemon) => { 
                 const pokemonId = pokemon.url.split("/")[6];
-                return <PokemonCard name={pokemon.name} key={pokemonId}/>
+                return <PokemonCard name={pokemon.name} key={pokemonId} onSelectCard = {()=> setClickedPokemon(pokemon.name)}/>
             }
             )}
         </div>
         <div ref={observerElem} style={{ height: "20px" }}></div>
         {isLoading && <p>Loading...</p>}
+
+        {clickedPokemon && (
+            <PokemonDetailsModal pokemonName={clickedPokemon} onCloseDetails={()=>setClickedPokemon(null)}
+            />
+        )}
         </>
     )
 }

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 const API_URL = "https://pokeapi.co/api/v2";
 
-function PokemonCard({name}) {
+function PokemonCard({name, onSelectCard}) {
     const [pokemon, setPokemon] = useState(null);
     const [error, setError] = useState(null);
 
@@ -32,6 +32,8 @@ function PokemonCard({name}) {
             <img src={pokemon.sprites.front_default} alt={`Front picture of ${pokemon.name}`}/>
             <h2>{pokemon.name}</h2>
             <p>Types: {pokemon.types.map((typeObj) => typeObj.type.name).join(", ")}</p>
+
+            <button onClick={onSelectCard}>Details</button>
         </div>
     )
 }
