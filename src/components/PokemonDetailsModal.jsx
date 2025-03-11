@@ -10,6 +10,8 @@ function PokemonDetailsModal ({pokemonName, onCloseDetails}) {
     const [regions, setRegions] = useState(null);
     const [pokemonRegion, setPokemonRegion] = useState(null);
 
+    const [weaknesses, setWeaknesses] = useState([]);
+
 //Fetch for the generations and regions
 useEffect(()=>{
     fetch(`${API_URL}/generation`)
@@ -51,6 +53,30 @@ useEffect(()=> {
 
 
 
+//Fetch for the types of pokemon
+useEffect(()=> {
+    if(pokemon) {
+        const typePromises = pokemon.types.map((typeObj)=>
+        fetch(typeObj.type.url)
+        .then((res)=> res.json())
+    );
+
+    Promise.all(typePromises)
+    .then((typeData) => {
+        const weaknesses = [];
+
+        typeData.forEach((type)=>{
+            type.damage_relations.double_damage_from.forEach((weakness) =>{
+                weaknesses.push(weakness.name);
+            });
+        });
+        const uniqueWeaknesses = weaknesses.filter((weakness, index) => weaknesses.indexOf(weakness) === index);
+        setWeaknesses(uniqueWeaknesses);
+    })
+    .catch((err)=> setError(err));
+    }
+}, [pokemon]);
+
 
 
 
@@ -75,6 +101,7 @@ return (
                     <img src={pokemon.sprites.back_default} alt={`Back picture of ${pokemon.name}`}/>
                     <p>Types: {pokemon.types.map((typeObj) => typeObj.type.name).join(", ")}</p>
                     <p>Region: {pokemonRegion}</p>
+                    <p>Weaknesses: {weaknesses.join(", ")}</p>
                 </div>
             </div>
     </>
