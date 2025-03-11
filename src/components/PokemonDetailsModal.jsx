@@ -9,29 +9,31 @@ function PokemonDetailsModal ({pokemonName, onCloseDetails}) {
 
     const [regions, setRegions] = useState(null);
     const [pokemonRegion, setPokemonRegion] = useState(null);
+
 //Fetch for the generations and regions
 useEffect(()=>{
     fetch(`${API_URL}/generation`)
     .then((res)=>res.json())
     .then((data)=> {
         
-        const generationPromises=data.results.map((generation)=> { 
+        const generationPromises=data.results.map((generation)=>  
             fetch(generation.url)
             .then((res)=> res.json())
-         });
+        
+         );
             Promise.all(generationPromises)
             .then((generationData)=>{
                 const regionsMap={};
                 generationData.forEach((generation)=> {
+                    console.log("generationData", generationData)
+                    console.log("generation", generation)
                     regionsMap[generation.name] = generation.main_region.name;
                 });
-
                     setRegions(regionsMap);
             })
             .catch((err)=> setError(err));
-        } )
-        .catch((err)=>setError(err))
-   
+        })
+        .catch((err)=>setError(err));
 }, []);
 
 // Extract region for the pokemon
