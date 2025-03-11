@@ -4,6 +4,7 @@ import "./PokemonDetailsModal.css";
 const API_URL = "https://pokeapi.co/api/v2";
 
 function PokemonDetailsModal ({pokemonName, onCloseDetails}) {
+    const [isLoading, setIsLoading] = useState(true);
     const [pokemon, setPokemon] = useState(null);
     const [error, setError] = useState(null);
 
@@ -14,6 +15,7 @@ function PokemonDetailsModal ({pokemonName, onCloseDetails}) {
 
 //Fetch for the generations and regions
 useEffect(()=>{
+    setIsLoading(true);
     fetch(`${API_URL}/generation`)
     .then((res)=>res.json())
     .then((data)=> {
@@ -32,22 +34,34 @@ useEffect(()=>{
                     regionsMap[generation.name] = generation.main_region.name;
                 });
                     setRegions(regionsMap);
+                    setIsLoading(false);
             })
-            .catch((err)=> setError(err));
+            .catch((err)=> {
+                setError(err)
+                setIsLoading(false);
+    });
         })
-        .catch((err)=>setError(err));
+        .catch((err)=>{
+            setError(err)
+            setIsLoading(false);
+});
 }, []);
 
 // Extract region for the pokemon
 useEffect(()=> {
     if(pokemonName && regions) {
+        setIsLoading(true); 
         fetch(`${API_URL}/pokemon-species/${pokemonName}`)
         .then((res)=> res.json())
         .then((data)=>{
             const region = (regions[data.generation.name]);
             setPokemonRegion(region);
+            setIsLoading(false); 
         })
-        .catch((err)=>setError(err))
+        .catch((err)=>{
+            setError(err)
+            setIsLoading(false); 
+    })
     }
 }, [pokemonName, regions])
 
@@ -56,6 +70,7 @@ useEffect(()=> {
 //Fetch for the types of pokemon
 useEffect(()=> {
     if(pokemon) {
+        setIsLoading(true);
         const typePromises = pokemon.types.map((typeObj)=>
         fetch(typeObj.type.url)
         .then((res)=> res.json())
@@ -72,8 +87,12 @@ useEffect(()=> {
         });
         const uniqueWeaknesses = weaknesses.filter((weakness, index) => weaknesses.indexOf(weakness) === index);
         setWeaknesses(uniqueWeaknesses);
+        setIsLoading(false);
     })
-    .catch((err)=> setError(err));
+    .catch((err)=> {
+        setError(err)
+        setIsLoading(false);
+     } );
     }
 }, [pokemon]);
 
@@ -82,12 +101,22 @@ useEffect(()=> {
 
 
     useEffect(() => {
+        setIsLoading(true);
         fetch(`${API_URL}/pokemon/${pokemonName}`)
         .then((res)=> res.json())
-        .then((data)=>setPokemon(data))
-        .catch((err)=> setError(err))
+        .then((data)=> {
+            setPokemon(data)
+            setIsLoading(false);
+        })
+        .catch((err)=> {
+            setError(err)
+            setIsLoading(false);
+    })
     }, [pokemonName])
 
+    if (isLoading) {
+        return <p>Loading details...</p>; // Mostra il messaggio di caricamento
+    }
     if (error) return <p>Error loading {pokemonName}: {error.message}</p>;
     if (!pokemon) return null;
 
