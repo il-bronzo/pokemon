@@ -1,39 +1,17 @@
 import { useEffect, useState, useRef} from "react";
 import PokemonCard from "./PokemonCard";
 import PokemonDetailsModal from "./PokemonDetailsModal";
+import { usePokemons } from "../servicies/usePomekon";
 
 const API_URL = "https://pokeapi.co/api/v2";
 const LIMIT = 20; //items per page for /pokemon.
 
 function PokemonList() {
-    const [pokemons, setPokemons] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [offset, setOffset] = useState(0); //a page delivers 20 items
     const observerElem = useRef(null)
     const [clickedPokemon, setClickedPokemon] = useState(null);
 
-    useEffect(() => {
-        setIsLoading(true);
-        fetch(`${API_URL}/pokemon?offset=${offset}&limit=${LIMIT}`)
-        .then((res) => {
-            if (!res.ok) {
-                throw new Error("Network response was not ok");
-              }
-            return res.json();
-        })
-        .then ((data) => {
-            setPokemons((prev) => [...prev, ...data.results]);
-            setError(null)
-        }) 
-        .catch((err) => {
-            console.log("Error while catching the pokemons:", err);
-            setError(err);
-         })
-        .finally(() => {
-            setIsLoading(false);
-         });
-    }, [offset]); 
+    const {pokemons, isLoading, error} = usePokemons(offset, LIMIT)
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {

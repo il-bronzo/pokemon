@@ -5,8 +5,10 @@ const API_URL = "https://pokeapi.co/api/v2";
 function PokemonCard({name, onSelectCard}) {
     const [pokemon, setPokemon] = useState(null);
     const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        setIsLoading(true);
         fetch(`${API_URL}/pokemon/${name}`)
         .then((res) => {
             if (!res.ok) {
@@ -17,10 +19,12 @@ function PokemonCard({name, onSelectCard}) {
         .then((data) => {
             setPokemon(data);
             setError(null);
+            setIsLoading(false);
         })
         .catch((err) => {
-            console.log(`Error while trying to get ${name}:`, err);
+            console.error(`Error while trying to get ${name}:`, err);
             setError(err);
+            setIsLoading(false);
         })
     }, [name]);
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import "./PokemonDetailsModal.css";
+import "./PokemonDetailsModal.css"; 
+import {usePokemonDetails, usePokemonWeaknesses} from "../servicies/usePomekon.js"
 
 const API_URL = "https://pokeapi.co/api/v2";
 
@@ -13,6 +14,7 @@ function PokemonDetailsModal ({pokemonName, onCloseDetails}) {
 
     const [weaknesses, setWeaknesses] = useState([]);
 
+//PROCESS TO GET THE REGION
 //Fetch for the generations and regions
 useEffect(()=>{
     setIsLoading(true);
@@ -66,7 +68,7 @@ useEffect(()=> {
 }, [pokemonName, regions])
 
 
-
+//PROCESS TO GET THE WEAKNESSES
 //Fetch for the types of pokemon
 useEffect(()=> {
     if(pokemon) {
@@ -98,8 +100,8 @@ useEffect(()=> {
 
 
 
-
-
+//POKEMON DETAILS
+//Pokemon details
     useEffect(() => {
         setIsLoading(true);
         fetch(`${API_URL}/pokemon/${pokemonName}`)
@@ -115,7 +117,7 @@ useEffect(()=> {
     }, [pokemonName])
 
     if (isLoading) {
-        return <p>Loading details...</p>; // Mostra il messaggio di caricamento
+        return <p>Loading details...</p>; 
     }
     if (error) return <p>Error loading {pokemonName}: {error.message}</p>;
     if (!pokemon) return null;
