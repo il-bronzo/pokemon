@@ -22,12 +22,15 @@ return (
             <div className="modal-overlay"> 
                 <div className="modal-content">
                     <button className="close-btn" onClick={onCloseDetails}>X</button>
-                    <h2>{pokemon.name}</h2>
+                    
                     <img src={pokemon.sprites.front_default} alt={`Front picture of ${pokemon.name}`}/>
                     <img src={pokemon.sprites.back_default} alt={`Back picture of ${pokemon.name}`}/>
-                    <p>Types: {pokemon.types.map((typeObj) => typeObj.type.name).join(", ")}</p>
-                    <p>Region: {pokemonRegion}</p>
-                    <p>Weaknesses: {weaknesses.join(", ")}</p>
+                    <div className="pokemon-details">
+                    <h2>{pokemon.name}</h2>
+                    <p><strong>Types:</strong> {pokemon.types.map((typeObj) => typeObj.type.name).join(", ")}</p>
+                    <p><strong>Region:</strong> {pokemonRegion}</p>
+                    <p><strong>Weaknesses:</strong> {weaknesses.join(", ")}</p>
+                    </div>
                 </div>
             </div>
     </>

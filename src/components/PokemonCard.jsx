@@ -10,12 +10,12 @@ function PokemonCard({name, onSelectCard}) {
     if(!pokemon) return null;
 
     return(
-        <div>
+        <div className="pokemon-card">
             <img src={pokemon.sprites.front_default} alt={`Front picture of ${pokemon.name}`}/>
             <h2>{pokemon.name}</h2>
-            <p>Types: {pokemon.types.map((typeObj) => typeObj.type.name).join(", ")}</p>
+            <p><strong>Types:</strong> {pokemon.types.map((typeObj) => typeObj.type.name).join(", ")}</p>
 
-            <button onClick={onSelectCard}>Details</button>
+            <button className= "details-button" onClick={onSelectCard}>Details</button>
         </div>
     )
 }

@@ -29,7 +29,7 @@ function PokemonList() {
 
     return (
         <>
-        <div>
+        <div className="pokemon-list">
             {pokemons.map((pokemon) => { 
                 const pokemonId = pokemon.url.split("/")[6];
                 return <PokemonCard name={pokemon.name} key={pokemonId} onSelectCard = {()=> setClickedPokemon(pokemon.name)}/>
