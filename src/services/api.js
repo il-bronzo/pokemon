@@ -35,7 +35,7 @@ function fetchPokemonSpecies(pokemonName) {
     .then((res)=> res.json())
 
         .catch((err)=>{
-            console.error(`Error fetching species for ${pokemonName}:`, error);
+            console.error(`Error fetching species for ${pokemonName}:`, err);
             throw err;
     })
 }

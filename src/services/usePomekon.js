@@ -37,6 +37,7 @@ function usePokemonDetails(pokemonName){
     const [error, setError] = useState(null);
 
     useEffect(()=> {
+        if (!pokemonName) return; 
         setIsLoading(true);
         fetchPokemonDetails(pokemonName)
         .then((data) => {
@@ -44,6 +45,7 @@ function usePokemonDetails(pokemonName){
             setError(null);
     })
     .catch((err) => {
+        console.error("Error fetching Pokémon details:", err);
         setError(err);
     })
     .finally(() => {
@@ -96,15 +98,15 @@ function usePokemonRegion(pokemonName) {
     const [region, setRegion] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [regions, setRegions] = useState(null);
+    const [regions, setRegions] = useState({});
 
     useEffect(()=>{
         if (!pokemonName) return;
         setIsLoading(true);
         fetchGenerations()
         .then((data)=> {
-            const generationPromises = data.results.map((generatio)=>
-            fetchGenerationDetails(generationPromises.url)
+            const generationPromises = data.results.map((generation)=>
+            fetchGenerationDetails(generation.url)
         );
         return Promise.all(generationPromises);
         })
@@ -113,7 +115,7 @@ function usePokemonRegion(pokemonName) {
             generationData.forEach((generation)=> {
                 regionsMap[generation.name] = generation.main_region.name;
             });
-            setRegion(regionsMap);
+            setRegions(regionsMap);
             setIsLoading(false);
         })
         .catch((err) => {
