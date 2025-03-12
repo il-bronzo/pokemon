@@ -1,9 +1,8 @@
 import { useEffect, useState, useRef} from "react";
 import PokemonCard from "./PokemonCard";
 import PokemonDetailsModal from "./PokemonDetailsModal";
-import { usePokemons } from "../servicies/usePomekon";
+import { usePokemons } from "../services/usePomekon";
 
-const API_URL = "https://pokeapi.co/api/v2";
 const LIMIT = 20; //items per page for /pokemon.
 
 function PokemonList() {

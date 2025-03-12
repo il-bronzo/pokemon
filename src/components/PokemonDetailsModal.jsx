@@ -1,125 +1,20 @@
-import { useEffect, useState } from "react";
 import "./PokemonDetailsModal.css"; 
-import {usePokemonDetails, usePokemonWeaknesses} from "../servicies/usePomekon.js"
+import {usePokemonDetails, usePokemonWeaknesses, usePokemonRegion} from "../services/usePomekon.js"
 
-const API_URL = "https://pokeapi.co/api/v2";
 
 function PokemonDetailsModal ({pokemonName, onCloseDetails}) {
-    const [isLoading, setIsLoading] = useState(true);
-    const [pokemon, setPokemon] = useState(null);
-    const [error, setError] = useState(null);
-
-    const [regions, setRegions] = useState(null);
-    const [pokemonRegion, setPokemonRegion] = useState(null);
-
-    const [weaknesses, setWeaknesses] = useState([]);
-
-//PROCESS TO GET THE REGION
-//Fetch for the generations and regions
-useEffect(()=>{
-    setIsLoading(true);
-    fetch(`${API_URL}/generation`)
-    .then((res)=>res.json())
-    .then((data)=> {
-        
-        const generationPromises=data.results.map((generation)=>  
-            fetch(generation.url)
-            .then((res)=> res.json())
-        
-         );
-            Promise.all(generationPromises)
-            .then((generationData)=>{
-                const regionsMap={};
-                generationData.forEach((generation)=> {
-                    console.log("generationData", generationData)
-                    console.log("generation", generation)
-                    regionsMap[generation.name] = generation.main_region.name;
-                });
-                    setRegions(regionsMap);
-                    setIsLoading(false);
-            })
-            .catch((err)=> {
-                setError(err)
-                setIsLoading(false);
-    });
-        })
-        .catch((err)=>{
-            setError(err)
-            setIsLoading(false);
-});
-}, []);
-
-// Extract region for the pokemon
-useEffect(()=> {
-    if(pokemonName && regions) {
-        setIsLoading(true); 
-        fetch(`${API_URL}/pokemon-species/${pokemonName}`)
-        .then((res)=> res.json())
-        .then((data)=>{
-            const region = (regions[data.generation.name]);
-            setPokemonRegion(region);
-            setIsLoading(false); 
-        })
-        .catch((err)=>{
-            setError(err)
-            setIsLoading(false); 
-    })
-    }
-}, [pokemonName, regions])
 
 
-//PROCESS TO GET THE WEAKNESSES
-//Fetch for the types of pokemon
-useEffect(()=> {
-    if(pokemon) {
-        setIsLoading(true);
-        const typePromises = pokemon.types.map((typeObj)=>
-        fetch(typeObj.type.url)
-        .then((res)=> res.json())
-    );
+    const { pokemon, isLoading: isPokemonLoading, error: pokemonError } = usePokemonDetails(pokemonName);
+    const { region: pokemonRegion, isLoading: isRegionLoading, error: regionError } = usePokemonRegion(pokemonName);
+    const { weaknesses, isLoading: isWeaknessesLoading, error: weaknessesError } = usePokemonWeaknesses(pokemon);
 
-    Promise.all(typePromises)
-    .then((typeData) => {
-        const weaknesses = [];
-
-        typeData.forEach((type)=>{
-            type.damage_relations.double_damage_from.forEach((weakness) =>{
-                weaknesses.push(weakness.name);
-            });
-        });
-        const uniqueWeaknesses = weaknesses.filter((weakness, index) => weaknesses.indexOf(weakness) === index);
-        setWeaknesses(uniqueWeaknesses);
-        setIsLoading(false);
-    })
-    .catch((err)=> {
-        setError(err)
-        setIsLoading(false);
-     } );
-    }
-}, [pokemon]);
-
-
-
-//POKEMON DETAILS
-//Pokemon details
-    useEffect(() => {
-        setIsLoading(true);
-        fetch(`${API_URL}/pokemon/${pokemonName}`)
-        .then((res)=> res.json())
-        .then((data)=> {
-            setPokemon(data)
-            setIsLoading(false);
-        })
-        .catch((err)=> {
-            setError(err)
-            setIsLoading(false);
-    })
-    }, [pokemonName])
-
-    if (isLoading) {
+    if (isPokemonLoading || isRegionLoading || isWeaknessesLoading) {
         return <p>Loading details...</p>; 
     }
-    if (error) return <p>Error loading {pokemonName}: {error.message}</p>;
+
+    const errorMessage = pokemonError || regionError || weaknessesError;
+    if (errorMessage) return <p>Error loading {pokemonName}: {errorMessage.message}</p>;
     if (!pokemon) return null;
 
 return (
