@@ -25,7 +25,7 @@ function PokemonList() {
     }, [isLoading]);
 
     
-    if(error) return <div>Error: {error}</div>
+    if(error) return <div className="error-message">Failed to load Pokémon</div>;
 
     return (
         <>

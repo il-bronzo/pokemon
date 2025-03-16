@@ -20,7 +20,7 @@ function usePokemons(offset, limit) {
             setError(null)
         })
         .catch((err) => {
-            setError(err);
+            setError(err.message || 'Failed to load Pokémon');
     })
     .finally(() => {
         setIsLoading(false);
