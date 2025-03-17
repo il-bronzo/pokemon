@@ -3,10 +3,10 @@ import PokemonCard from "./PokemonCard";
 import PokemonDetailsModal from "./PokemonDetailsModal";
 import { usePokemons } from "../services/usePomekon";
 
-const LIMIT = 20; //items per page for /pokemon.
+const LIMIT = 20; 
 
 function PokemonList() {
-    const [offset, setOffset] = useState(0); //a page delivers 20 items
+    const [offset, setOffset] = useState(0); 
     const observerElem = useRef(null)
     const [clickedPokemon, setClickedPokemon] = useState(null);
 

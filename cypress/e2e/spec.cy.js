@@ -18,7 +18,6 @@ describe('Pokémon Explorer', () => {
 
   describe('Pokémon Details Modal', () => {
     beforeEach(() => {
-      // Apri la modal prima di ogni test
       cy.get('.pokemon-card').first().find('.details-button').click(); 
       cy.get('.modal-overlay').should('be.visible');
     });
