@@ -4,10 +4,13 @@ import PokemonList from './components/PokemonList'
 
 function App() {
   return (
-    <>
-    <PokemonList/>
-        
-    </>
+    <div className="App">
+      <header className="app-header">
+        <h1>Bolttedex</h1>
+        <p>Start the adventure and become a Pokémon Champion!</p>
+      </header>
+      <PokemonList />
+    </div>
   )
 }
 

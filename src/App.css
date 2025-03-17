@@ -66,3 +66,20 @@ button:focus-visible {
   outline: none;
   box-shadow: 0 0 6px rgba(161, 165, 235, 0.5);
 }
+
+.app-header {
+  text-align: center;
+  padding: 20px;
+  color: #2a75bb; 
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.app-header p {
+  margin: 5px 0 0;
+  font-size: 1.2rem;
+}
