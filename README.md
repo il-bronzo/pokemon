@@ -2,7 +2,7 @@
 
 Bolttedex is a web application built with React.js that allows users to explore and learn about various Pokémon. The application fetches data from the [PokeAPI](https://pokeapi.co/) and provides an infinite scroll list of Pokémon, along with detailed information about each Pokémon in a modal.
 
-![Bolttedex Screenshot](.public/bolttedex.png) 
+![Bolttedex Screenshot](./public/bolttedex.png) 
 
 ## Features
 - **Infinite Scroll List**: Displays a list of Pokémon with their front image, name, and types. The list loads more Pokémon as you scroll down.
